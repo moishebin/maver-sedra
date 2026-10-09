@@ -73,8 +73,22 @@ export function SpeedControl({
         </button>
 
         <div className="w-24 text-center leading-tight">
-          <span className="block text-xs text-gray-400 uppercase tracking-wide">{t.speed}</span>
-          <span className="block text-2xl font-bold text-white">{targetSpeed}</span>
+          {/* While warming up, the current speed takes the label's place (same height, so nothing shifts) */}
+          {isWarmingUp ? (
+            <span className="flex h-5 items-center justify-center gap-1 text-sm font-semibold text-green-400">
+              <Zap className="w-3 h-3 fill-current" />
+              {Math.round(speed)}
+            </span>
+          ) : (
+            <span className="flex h-5 items-center justify-center text-xs text-gray-400 uppercase tracking-wide">
+              {t.speed}
+            </span>
+          )}
+          <span
+            className={`block text-2xl font-bold transition-colors ${isWarmingUp ? 'text-gray-500' : 'text-white'}`}
+          >
+            {targetSpeed}
+          </span>
           <span className="block text-xs text-gray-400">{t.wpm}</span>
         </div>
 
@@ -133,7 +147,7 @@ export function SpeedControl({
           </button>
           <p className="text-xs text-center text-gray-500" aria-live="polite">
             {isWarmingUp
-              ? <span className="text-green-400">{t.warmingUp(Math.round(speed), targetSpeed)}</span>
+              ? <span className="text-green-400">{t.warmingUp(targetSpeed)}</span>
               : !rampEnabled
                 ? t.warmUpOffHint
                 : warmUpDone
