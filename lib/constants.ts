@@ -1,6 +1,6 @@
 // Application constants
 
-export const APP_NAME = 'MAVER Sedra';
+export const APP_NAME = 'Teivah';
 export const APP_DESCRIPTION = 'RSVP Torah Reader for the Weekly Parsha';
 
 export const DEFAULT_SPEED = 250; // WPM

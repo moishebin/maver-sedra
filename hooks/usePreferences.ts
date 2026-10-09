@@ -10,6 +10,7 @@ const DEFAULT_PREFERENCES: UserPreferences = {
   theme: 'dark',
   fontSize: 'medium',
   readingMode: 'pasuk',
+  targumPace: 1,
 };
 
 /**
@@ -32,11 +33,13 @@ interface UsePreferencesReturn {
   updateIsrael: (israel: boolean) => void;
   /** Update how the parsha is read (pasuk / section / parsha / once) */
   updateReadingMode: (mode: ReadingMode) => void;
+  /** Update the targum speed (fraction of the reading speed) */
+  updateTargumPace: (pace: number) => void;
   /** Reset to default preferences */
   reset: () => void;
 }
 
-function readStored(): Partial<UserPreferences> {
+export function readStored(): Partial<UserPreferences> {
   try {
     const stored = localStorage.getItem(STORAGE_KEY);
     return stored ? JSON.parse(stored) : {};
@@ -49,7 +52,7 @@ function readStored(): Partial<UserPreferences> {
  * Saves only the changed fields, merged into what is stored, so several
  * components using this hook don't overwrite each other's changes
  */
-function persist(patch: Partial<UserPreferences> | null) {
+export function persist(patch: Partial<UserPreferences> | null) {
   try {
     if (patch === null) {
       localStorage.removeItem(STORAGE_KEY);
@@ -103,6 +106,10 @@ export function usePreferences(): UsePreferencesReturn {
     update({ readingMode });
   }, [update]);
 
+  const updateTargumPace = useCallback((targumPace: number) => {
+    update({ targumPace: Math.max(0.4, Math.min(1, targumPace)) });
+  }, [update]);
+
   const reset = useCallback(() => {
     setPreferences(DEFAULT_PREFERENCES);
     persist(null);
@@ -117,6 +124,7 @@ export function usePreferences(): UsePreferencesReturn {
     updateFontSize,
     updateIsrael,
     updateReadingMode,
+    updateTargumPace,
     reset,
   };
 }

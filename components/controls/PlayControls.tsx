@@ -1,6 +1,7 @@
 'use client';
 
 import { Play, Pause, Rewind, FastForward } from 'lucide-react';
+import { useLanguage } from '../LanguageProvider';
 
 /**
  * Props for the PlayControls component
@@ -32,6 +33,7 @@ export function PlayControls({
   canRewind,
   canForward,
 }: PlayControlsProps) {
+  const { t } = useLanguage();
   return (
     <div className="flex items-center justify-center gap-4">
       {/* Rewind Button */}
@@ -43,16 +45,16 @@ export function PlayControls({
             ? 'bg-gray-700 hover:bg-gray-600 text-white active:scale-95'
             : 'bg-gray-800 text-gray-600 cursor-not-allowed'
         }`}
-        aria-label="Rewind 10 words"
+        aria-label={t.rewind}
       >
-        <Rewind className="w-6 h-6" />
+        <Rewind className="w-6 h-6 rtl:-scale-x-100" />
       </button>
 
       {/* Play/Pause Button */}
       <button
         onClick={onPlayPause}
         className="p-6 rounded-full bg-blue-600 hover:bg-blue-500 text-white transition-all duration-200 active:scale-95 shadow-lg hover:shadow-xl"
-        aria-label={isPlaying ? 'Pause' : 'Play'}
+        aria-label={isPlaying ? t.pause : t.play}
       >
         {isPlaying ? (
           <Pause className="w-8 h-8" />
@@ -70,9 +72,9 @@ export function PlayControls({
             ? 'bg-gray-700 hover:bg-gray-600 text-white active:scale-95'
             : 'bg-gray-800 text-gray-600 cursor-not-allowed'
         }`}
-        aria-label="Forward 10 words"
+        aria-label={t.forward}
       >
-        <FastForward className="w-6 h-6" />
+        <FastForward className="w-6 h-6 rtl:-scale-x-100" />
       </button>
     </div>
   );

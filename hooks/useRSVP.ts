@@ -23,6 +23,8 @@ interface UseRSVPOptions {
   rampStartPercent?: number;
   /** Number of words to ramp up over (default: 30) */
   rampWords?: number;
+  /** Targum speed as a fraction of the reading speed (default: 1) */
+  targumPace?: number;
 }
 
 /**
@@ -77,6 +79,7 @@ export function useRSVP(options: UseRSVPOptions): UseRSVPReturn {
     enableRampUp = true,
     rampStartPercent = 0.5,
     rampWords = 30,
+    targumPace = 1,
   } = options;
 
   const [isPlaying, setIsPlaying] = useState(false);
@@ -111,9 +114,10 @@ export function useRSVP(options: UseRSVPOptions): UseRSVPReturn {
     if (word.hasPeriod) multiplier *= 1.5;    // Period: longer pause
     if (word.hasSofPasuk) multiplier *= 1.8;  // Sof pasuk: longest pause
     if (word.hasNikkud) multiplier *= 1.1;    // Nikkud: slightly slower
+    if (word.source?.kind === 'targum') multiplier /= targumPace; // Aramaic: user's slower pace
 
     return baseDelay * multiplier;
-  }, []);
+  }, [targumPace]);
 
   // Update ramped speed whenever target speed or ramp progress changes
   useEffect(() => {

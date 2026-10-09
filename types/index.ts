@@ -1,5 +1,5 @@
 /**
- * Core data types for MAVER Sedra - RSVP Torah Reader
+ * Core data types for Teivah - RSVP Torah Reader
  */
 
 /** Represents a single aliyah (Torah reading section) */
@@ -116,6 +116,10 @@ export interface UserPreferences {
   israel?: boolean;
   /** How to read the parsha (Torah twice and targum, and in what chunks) */
   readingMode: ReadingMode;
+  /** Targum speed as a fraction of the reading speed (1 = same, 0.7 = 70%) */
+  targumPace: number;
+  /** UI language; unset means follow the browser language */
+  language?: 'en' | 'he';
 }
 
 /** Hebcal API response types */

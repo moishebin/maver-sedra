@@ -2,6 +2,7 @@
 
 import { ReadingMode } from '@/types';
 import { READING_MODES } from '@/lib/reading';
+import { useLanguage } from '../LanguageProvider';
 
 /**
  * Props for the ReadingModeControl component
@@ -18,19 +19,19 @@ interface ReadingModeControlProps {
  * for the whole parsha, or the Torah text once
  */
 export function ReadingModeControl({ mode, onModeChange }: ReadingModeControlProps) {
-  const selected = READING_MODES.find((m) => m.value === mode);
+  const { t } = useLanguage();
 
   return (
     <div className="flex flex-col items-center gap-3">
       <div className="text-sm text-gray-400 uppercase tracking-wide">
-        Twice &amp; Targum
+        {t.readingModeTitle}
       </div>
       <div
         role="radiogroup"
-        aria-label="Reading mode"
+        aria-label={t.readingModeLabel}
         className="flex flex-wrap justify-center rounded-lg bg-gray-800 p-1 text-sm"
       >
-        {READING_MODES.map(({ value, label }) => (
+        {READING_MODES.map((value) => (
           <button
             key={value}
             type="button"
@@ -43,13 +44,11 @@ export function ReadingModeControl({ mode, onModeChange }: ReadingModeControlPro
                 : 'text-gray-400 hover:text-white'
             }`}
           >
-            {label}
+            {t.modes[value].label}
           </button>
         ))}
       </div>
-      {selected && (
-        <p className="text-xs text-gray-500 text-center">{selected.description}</p>
-      )}
+      <p className="text-xs text-gray-500 text-center">{t.modes[mode].description}</p>
     </div>
   );
 }

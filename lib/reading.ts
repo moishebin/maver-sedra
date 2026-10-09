@@ -13,12 +13,8 @@ export interface ParshaVerse {
   endsSection: boolean;
 }
 
-export const READING_MODES: { value: ReadingMode; label: string; description: string }[] = [
-  { value: 'pasuk', label: 'Pasuk', description: 'Each pasuk twice, then its targum' },
-  { value: 'section', label: 'Section', description: 'Each section (until פ / ס) twice, then its targum' },
-  { value: 'parsha', label: 'Parsha', description: 'The whole parsha twice, then the whole targum' },
-  { value: 'once', label: 'Torah only', description: 'The Torah text once, no targum' },
-];
+/** Reading modes in the order they're offered (labels live in lib/i18n.ts) */
+export const READING_MODES: ReadingMode[] = ['pasuk', 'section', 'parsha', 'once'];
 
 /**
  * Builds the word sequence for reading a parsha in the given mode.

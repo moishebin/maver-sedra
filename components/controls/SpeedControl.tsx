@@ -1,6 +1,7 @@
 'use client';
 
 import { Minus, Plus, Zap } from 'lucide-react';
+import { useLanguage } from '../LanguageProvider';
 
 /**
  * Props for the SpeedControl component
@@ -38,6 +39,8 @@ export function SpeedControl({
   rampEnabled = true,
   onToggleRamp,
 }: SpeedControlProps) {
+  const { t } = useLanguage();
+
   const decreaseSpeed = () => {
     const newSpeed = Math.max(min, speed - step);
     onSpeedChange(newSpeed);
@@ -58,23 +61,23 @@ export function SpeedControl({
     <div className="flex flex-col items-center gap-3">
       {/* Speed Display with Ramp Toggle */}
       <div className="text-sm text-gray-400 uppercase tracking-wide flex items-center gap-2">
-        Speed
+        {t.speed}
         {isRamping && (
           <span 
             className="w-1.5 h-1.5 rounded-full bg-green-400 animate-pulse"
-            title={`Warming up: ${rampProgress}% of target speed`}
+            title={t.warmingUp(rampProgress)}
           />
         )}
         {onToggleRamp && (
           <button
             onClick={onToggleRamp}
-            className={`ml-2 p-1 rounded transition-all duration-200 ${
+            className={`ms-2 p-1 rounded transition-all duration-200 ${
               rampEnabled 
                 ? 'bg-green-500/20 text-green-400 hover:bg-green-500/30' 
                 : 'bg-gray-700 text-gray-500 hover:bg-gray-600 hover:text-gray-400'
             }`}
-            title={rampEnabled ? 'Warm-up enabled - click to disable' : 'Warm-up disabled - click to enable'}
-            aria-label={rampEnabled ? 'Disable warm-up ramp' : 'Enable warm-up ramp'}
+            title={rampEnabled ? t.warmUpOn : t.warmUpOff}
+            aria-label={rampEnabled ? t.disableWarmUp : t.enableWarmUp}
           >
             <Zap className={`w-3.5 h-3.5 ${rampEnabled ? 'fill-current' : ''}`} />
           </button>
@@ -91,7 +94,7 @@ export function SpeedControl({
               ? 'bg-gray-700 hover:bg-gray-600 text-white active:scale-95'
               : 'bg-gray-800 text-gray-600 cursor-not-allowed'
           }`}
-          aria-label="Decrease speed"
+          aria-label={t.slower}
         >
           <Minus className="w-5 h-5" />
         </button>
@@ -99,9 +102,9 @@ export function SpeedControl({
         <div className="w-20 text-center">
           <span className="text-2xl font-bold text-white">{Math.round(speed)}</span>
           <span className="text-xs text-gray-400 block">
-            WPM
+            {t.wpm}
             {isRamping && targetSpeed && (
-              <span className="text-green-400 ml-1">→ {Math.round(targetSpeed)}</span>
+              <span className="text-green-400 ms-1"><span className="inline-block rtl:-scale-x-100">→</span> {Math.round(targetSpeed)}</span>
             )}
           </span>
         </div>
@@ -114,7 +117,7 @@ export function SpeedControl({
               ? 'bg-gray-700 hover:bg-gray-600 text-white active:scale-95'
               : 'bg-gray-800 text-gray-600 cursor-not-allowed'
           }`}
-          aria-label="Increase speed"
+          aria-label={t.faster}
         >
           <Plus className="w-5 h-5" />
         </button>

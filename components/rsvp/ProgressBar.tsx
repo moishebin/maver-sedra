@@ -44,7 +44,7 @@ export function ProgressBar({
       {/* Progress Bar */}
       <div className="relative h-2 bg-gray-700 rounded-full overflow-hidden">
         <div
-          className="absolute top-0 left-0 h-full bg-blue-500 rounded-full transition-all duration-300 ease-out"
+          className="absolute top-0 start-0 h-full bg-blue-500 rounded-full transition-all duration-300 ease-out"
           style={{ width: `${clampedPercentage}%` }}
         />
       </div>

@@ -1,4 +1,4 @@
-# MAVER Sedra
+# Teivah
 
 Read the weekly parsha one word at a time (RSVP), with *shnayim mikra v'echad targum*: each pasuk, section, or the whole parsha twice, followed by Targum Onkelos.
 

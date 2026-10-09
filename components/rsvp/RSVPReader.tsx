@@ -9,6 +9,8 @@ import { ProgressBar } from './ProgressBar';
 import { PlayControls } from '../controls/PlayControls';
 import { SpeedControl } from '../controls/SpeedControl';
 import { ArrowLeft, RotateCcw } from 'lucide-react';
+import { useLanguage } from '../LanguageProvider';
+import { formatRef, Language, Strings } from '@/lib/i18n';
 
 /**
  * Props for the RSVPReader component
@@ -22,6 +24,8 @@ interface RSVPReaderProps {
   initialSpeed?: number;
   /** Starting word index (default: 0) */
   initialIndex?: number;
+  /** Targum speed as a fraction of the reading speed (default: 1) */
+  targumPace?: number;
   /** Callback when reading completes */
   onComplete?: () => void;
   /** Callback to go back (e.g., to homepage) */
@@ -32,12 +36,13 @@ interface RSVPReaderProps {
   children?: ReactNode;
 }
 
-/** "Genesis 1:5 · Torah (2nd)" style label for where a word comes from */
-function sourceLabel(word: WordToken): string | null {
+/** "Genesis 1:5 · Torah (2nd)" / "בראשית א:ה · מקרא" label for where a word comes from */
+function sourceLabel(word: WordToken, lang: Language, t: Strings): string | null {
   const source = word.source;
   if (!source) return null;
-  if (source.kind === 'targum') return `${source.ref} · Targum Onkelos`;
-  return `${source.ref} · Torah${source.pass === 2 ? ' (2nd)' : ''}`;
+  const ref = formatRef(source.ref, lang);
+  if (source.kind === 'targum') return `${ref} · ${t.targum}`;
+  return `${ref} · ${t.torah}${source.pass === 2 ? ` ${t.secondTime}` : ''}`;
 }
 
 /**
@@ -49,12 +54,14 @@ export function RSVPReader({
   title,
   initialSpeed,
   initialIndex = 0,
+  targumPace,
   onComplete,
   onBack,
   onProgress,
   children,
 }: RSVPReaderProps) {
   const { preferences, isLoaded: prefsLoaded, updateSpeed } = usePreferences();
+  const { lang, t } = useLanguage();
   
   // Use preferences speed or initial speed or default
   const defaultSpeed = initialSpeed || preferences.speed || 250;
@@ -77,6 +84,7 @@ export function RSVPReader({
     words,
     initialSpeed: defaultSpeed,
     initialIndex,
+    targumPace,
     onComplete,
     onProgress,
   });
@@ -105,16 +113,20 @@ export function RSVPReader({
         return;
       }
 
+      // Left/right follow the layout: in Hebrew (RTL) "back" is to the right
+      const backKey = lang === 'he' ? 'ArrowRight' : 'ArrowLeft';
+      const forwardKey = lang === 'he' ? 'ArrowLeft' : 'ArrowRight';
+
       switch (e.key) {
         case ' ':
           e.preventDefault();
           toggle();
           break;
-        case 'ArrowLeft':
+        case backKey:
           e.preventDefault();
           rewind(10);
           break;
-        case 'ArrowRight':
+        case forwardKey:
           e.preventDefault();
           forward(10);
           break;
@@ -135,19 +147,19 @@ export function RSVPReader({
 
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [toggle, rewind, forward, handleSpeedChange, speed, onBack]);
+  }, [toggle, rewind, forward, handleSpeedChange, speed, onBack, lang]);
 
   if (!currentWord) {
     return (
       <div className="flex items-center justify-center min-h-screen">
         <div className="text-center">
-          <p className="text-gray-400">No text to display</p>
+          <p className="text-gray-400">{t.noTextToDisplay}</p>
           {onBack && (
             <button
               onClick={onBack}
               className="mt-4 px-4 py-2 bg-blue-600 hover:bg-blue-500 rounded-lg text-white transition-colors"
             >
-              Go Back
+              {t.goBack}
             </button>
           )}
         </div>
@@ -163,8 +175,8 @@ export function RSVPReader({
           onClick={onBack}
           className="flex items-center gap-2 text-gray-400 hover:text-white transition-colors"
         >
-          <ArrowLeft className="w-5 h-5" />
-          <span className="hidden sm:inline">Back</span>
+          <ArrowLeft className="w-5 h-5 rtl:-scale-x-100" />
+          <span className="hidden sm:inline">{t.back}</span>
         </button>
         <h1 className="text-lg font-semibold text-center flex-1 px-4 truncate" dir="rtl">
           {title}
@@ -174,11 +186,11 @@ export function RSVPReader({
             <button
               onClick={() => {
                 pause();
-                if (window.confirm('Start over from the beginning?')) jumpTo(0);
+                if (window.confirm(t.startOverConfirm)) jumpTo(0);
               }}
               className="flex items-center gap-1 text-gray-400 hover:text-white transition-colors"
-              title="Start over"
-              aria-label="Start over from the beginning"
+              title={t.startOver}
+              aria-label={t.startOverLabel}
             >
               <RotateCcw className="w-5 h-5" />
             </button>
@@ -196,7 +208,7 @@ export function RSVPReader({
                 currentWord.source.kind === 'targum' ? 'text-amber-400' : 'text-gray-400'
               }`}
             >
-              {sourceLabel(currentWord)}
+              {sourceLabel(currentWord, lang, t)}
             </p>
           )}
           <WordDisplay
@@ -240,7 +252,7 @@ export function RSVPReader({
       {/* Footer */}
       <footer className="p-4 text-center text-sm text-gray-500">
         <p className="hidden sm:block">
-          Space: Play/Pause • ← →: Navigate • ↑ ↓: Speed • Esc: Back
+          {t.shortcuts}
         </p>
       </footer>
     </div>
