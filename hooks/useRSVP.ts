@@ -64,6 +64,8 @@ interface UseRSVPReturn {
   rampEnabled: boolean;
   /** Toggle ramp mode on/off */
   toggleRamp: () => void;
+  /** Whether the warm-up has reached full speed (resets when playback restarts) */
+  rampComplete: boolean;
 }
 
 /**
@@ -277,5 +279,6 @@ export function useRSVP(options: UseRSVPOptions): UseRSVPReturn {
     skipRamp,
     rampEnabled,
     toggleRamp,
+    rampComplete: rampEnabled && rampWordsRead >= rampWords,
   };
 }

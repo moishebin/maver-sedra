@@ -1,6 +1,6 @@
 'use client';
 
-import { Minus, Plus, Zap } from 'lucide-react';
+import { Check, Minus, Plus, Zap } from 'lucide-react';
 import { useLanguage } from '../LanguageProvider';
 
 /**
@@ -23,6 +23,8 @@ interface SpeedControlProps {
   step?: number;
   /** Whether warm-up is enabled */
   rampEnabled?: boolean;
+  /** Whether the warm-up has finished and the reader is at full speed */
+  warmUpDone?: boolean;
   /** Callback to toggle warm-up */
   onToggleRamp?: () => void;
 }
@@ -40,6 +42,7 @@ export function SpeedControl({
   max = 600,
   step = 25,
   rampEnabled = true,
+  warmUpDone = false,
   onToggleRamp,
 }: SpeedControlProps) {
   const { t } = useLanguage();
@@ -54,10 +57,6 @@ export function SpeedControl({
 
   return (
     <div className="flex flex-col items-center gap-3">
-      <div className="text-sm text-gray-400 uppercase tracking-wide">
-        {t.speed}
-      </div>
-
       {/* Chosen speed */}
       <div className="flex items-center gap-4">
         <button
@@ -73,9 +72,10 @@ export function SpeedControl({
           <Minus className="w-5 h-5" />
         </button>
 
-        <div className="w-24 text-center">
-          <span className="text-2xl font-bold text-white">{targetSpeed}</span>
-          <span className="text-xs text-gray-400 block">{t.wpm}</span>
+        <div className="w-24 text-center leading-tight">
+          <span className="block text-xs text-gray-400 uppercase tracking-wide">{t.speed}</span>
+          <span className="block text-2xl font-bold text-white">{targetSpeed}</span>
+          <span className="block text-xs text-gray-400">{t.wpm}</span>
         </div>
 
         <button
@@ -119,18 +119,26 @@ export function SpeedControl({
             aria-label={rampEnabled ? t.disableWarmUp : t.enableWarmUp}
             onClick={onToggleRamp}
             className={`flex items-center gap-2 px-3 py-1.5 rounded-full text-sm transition-colors ${
-              rampEnabled
-                ? 'bg-green-500/20 text-green-300 hover:bg-green-500/30'
-                : 'bg-gray-700 text-gray-400 hover:bg-gray-600'
+              !rampEnabled
+                ? 'bg-gray-700 text-gray-400 hover:bg-gray-600'
+                : warmUpDone
+                  ? 'bg-gray-800 text-gray-500 hover:bg-gray-700'
+                  : 'bg-green-500/20 text-green-300 hover:bg-green-500/30'
             }`}
           >
-            <Zap className={`w-4 h-4 ${rampEnabled ? 'fill-current' : ''}`} />
+            {rampEnabled && warmUpDone
+              ? <Check className="w-4 h-4" />
+              : <Zap className={`w-4 h-4 ${rampEnabled ? 'fill-current' : ''}`} />}
             {t.warmUp}: {rampEnabled ? t.on : t.off}
           </button>
           <p className="text-xs text-center text-gray-500" aria-live="polite">
             {isWarmingUp
               ? <span className="text-green-400">{t.warmingUp(Math.round(speed), targetSpeed)}</span>
-              : rampEnabled ? t.warmUpOnHint : t.warmUpOffHint}
+              : !rampEnabled
+                ? t.warmUpOffHint
+                : warmUpDone
+                  ? t.warmUpDone(targetSpeed)
+                  : t.warmUpOnHint}
           </p>
         </div>
       )}

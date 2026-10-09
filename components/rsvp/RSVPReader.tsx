@@ -81,6 +81,7 @@ export function RSVPReader({
     setSpeed,
     rampEnabled,
     toggleRamp,
+    rampComplete,
   } = useRSVP({
     words,
     initialSpeed: defaultSpeed,
@@ -257,6 +258,7 @@ export function RSVPReader({
             isPlaying={isPlaying}
             onSpeedChange={handleSpeedChange}
             rampEnabled={rampEnabled}
+            warmUpDone={rampComplete}
             onToggleRamp={toggleRamp}
           />
 
