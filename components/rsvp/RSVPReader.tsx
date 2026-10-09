@@ -132,11 +132,11 @@ export function RSVPReader({
           break;
         case 'ArrowUp':
           e.preventDefault();
-          handleSpeedChange(speed + 25);
+          handleSpeedChange(targetSpeed + 25);
           break;
         case 'ArrowDown':
           e.preventDefault();
-          handleSpeedChange(speed - 25);
+          handleSpeedChange(targetSpeed - 25);
           break;
         case 'Escape':
           e.preventDefault();
@@ -147,7 +147,7 @@ export function RSVPReader({
 
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [toggle, rewind, forward, handleSpeedChange, speed, onBack, lang]);
+  }, [toggle, rewind, forward, handleSpeedChange, targetSpeed, onBack, lang]);
 
   if (!currentWord) {
     return (
@@ -240,6 +240,7 @@ export function RSVPReader({
           <SpeedControl
             speed={speed}
             targetSpeed={targetSpeed}
+            isPlaying={isPlaying}
             onSpeedChange={handleSpeedChange}
             rampEnabled={rampEnabled}
             onToggleRamp={toggleRamp}
