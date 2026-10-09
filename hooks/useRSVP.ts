@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useCallback } from 'react';
 import { WordToken } from '@/types';
+import { wordDelayMs } from '@/lib/timing';
 
 /**
  * Options for the useRSVP hook
@@ -102,22 +103,10 @@ export function useRSVP(options: UseRSVPOptions): UseRSVPReturn {
   }, [rampEnabled, rampStartPercent, rampWords, targetSpeed]);
 
   // Calculate delay for a specific word based on its properties
-  const getDelay = useCallback((word: WordToken, currentSpeed: number): number => {
-    // Base delay in milliseconds: 60000ms / WPM
-    const baseDelay = 60000 / currentSpeed;
-    let multiplier = 1.0;
-
-    // Apply multipliers based on word properties
-    if (word.isShort) multiplier *= 0.7;      // Short words: faster
-    if (word.isLong) multiplier *= 1.3;       // Long words: slower
-    if (word.hasComma) multiplier *= 1.2;     // Comma: slight pause
-    if (word.hasPeriod) multiplier *= 1.5;    // Period: longer pause
-    if (word.hasSofPasuk) multiplier *= 1.8;  // Sof pasuk: longest pause
-    if (word.hasNikkud) multiplier *= 1.1;    // Nikkud: slightly slower
-    if (word.source?.kind === 'targum') multiplier /= targumPace; // Aramaic: user's slower pace
-
-    return baseDelay * multiplier;
-  }, [targumPace]);
+  const getDelay = useCallback(
+    (word: WordToken, currentSpeed: number): number => wordDelayMs(word, currentSpeed, targumPace),
+    [targumPace]
+  );
 
   // Update ramped speed whenever target speed or ramp progress changes
   useEffect(() => {

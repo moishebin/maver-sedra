@@ -1,5 +1,7 @@
 'use client';
 
+import { ReactNode } from 'react';
+
 /**
  * Props for the ProgressBar component
  */
@@ -10,6 +12,8 @@ interface ProgressBarProps {
   total: number;
   /** Optional label text */
   label?: string;
+  /** Extra text shown after the percentage (e.g. time left) */
+  detail?: ReactNode;
 }
 
 /**
@@ -20,6 +24,7 @@ export function ProgressBar({
   current,
   total,
   label,
+  detail,
 }: ProgressBarProps) {
   // Calculate percentage (avoid division by zero)
   const percentage = total > 0 ? (current / (total - 1)) * 100 : 0;
@@ -52,6 +57,7 @@ export function ProgressBar({
       {/* Percentage */}
       <div className="text-center text-xs text-gray-500">
         {Math.round(clampedPercentage)}%
+        {detail && <> · {detail}</>}
       </div>
     </div>
   );

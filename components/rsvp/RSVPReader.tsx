@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useCallback, ReactNode } from 'react';
+import { useEffect, useCallback, useMemo, ReactNode } from 'react';
 import { WordToken } from '@/types';
 import { useRSVP } from '@/hooks/useRSVP';
 import { usePreferences } from '@/hooks/usePreferences';
@@ -11,6 +11,7 @@ import { SpeedControl } from '../controls/SpeedControl';
 import { ArrowLeft, RotateCcw } from 'lucide-react';
 import { useLanguage } from '../LanguageProvider';
 import { formatRef, Language, Strings } from '@/lib/i18n';
+import { formatDuration, timeRemainingFrom } from '@/lib/timing';
 
 /**
  * Props for the RSVPReader component
@@ -88,6 +89,13 @@ export function RSVPReader({
     onComplete,
     onProgress,
   });
+
+  // Reading time for the whole sequence and from each word on, at the chosen
+  // speed (recomputed when the speed, targum pace or reading mode changes)
+  const timeLeft = useMemo(
+    () => timeRemainingFrom(words, targetSpeed, targumPace ?? 1),
+    [words, targetSpeed, targumPace]
+  );
 
   // Saved preferences load after the first render, so apply the saved speed
   // once they arrive (unless the caller asked for a specific speed)
@@ -224,6 +232,12 @@ export function RSVPReader({
           <ProgressBar
             current={currentIndex}
             total={words.length}
+            detail={
+              <>
+                {t.timeTotal(formatDuration(timeLeft[0], lang))}
+                {currentIndex > 0 && <> · {t.timeLeft(formatDuration(timeLeft[currentIndex], lang))}</>}
+              </>
+            }
           />
 
           {/* Play Controls */}

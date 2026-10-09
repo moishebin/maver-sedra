@@ -66,6 +66,8 @@ const en = {
   forward: 'Forward 10 words',
 
   // Speed
+  timeTotal: (duration: string) => `${duration} total`,
+  timeLeft: (duration: string) => `${duration} left`,
   speed: 'Speed',
   wpm: 'WPM',
   warmUp: 'Warm-up',
@@ -160,6 +162,8 @@ const he: Strings = {
   rewind: 'אחורה 10 מילים',
   forward: 'קדימה 10 מילים',
 
+  timeTotal: (duration: string) => `סה״כ ${duration}`,
+  timeLeft: (duration: string) => `נותרו ${duration}`,
   speed: 'מהירות',
   wpm: 'מילים לדקה',
   warmUp: 'האצה הדרגתית',
