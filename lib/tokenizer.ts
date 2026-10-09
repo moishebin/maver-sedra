@@ -38,6 +38,7 @@ export function tokenizeHebrew(text: string): WordToken[] {
   // This handles cases like "word׃,nextword" -> "word׃, nextword"
   normalized = normalized
     .replace(/([,\u05C3])([\u05D0-\u05EA])/g, '$1 $2')  // Add space after comma/sof pasuk if followed by Hebrew letter
+    .replace(/[\u05BE-]/g, ' ')  // Maqaf (\u05BE) or hyphen joins words: show each word on its own
     .replace(/\s+/g, ' ');  // Normalize multiple spaces to single space
 
   // Split by whitespace
